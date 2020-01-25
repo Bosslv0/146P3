@@ -18,8 +18,18 @@ def traverse_nodes(node, board, state, identity):
     Returns:        A node from which the next stage of the search can proceed.
 
     """
-    pass
-    # Hint: return leaf_node
+
+    if board.legal_actions(state) and node.untried_actions:
+        print('New Node Found!')
+        leaf_node = current_node
+        return leaf_node
+
+    chosen_action = random.choice(node.child_nodes.keys())
+    print(chosen_action)
+    chosen_node = node.child_nodes[chosen_action]
+
+    leaf_node = traverse_nodes(chosen_node, board, state, identity)
+    return leaf_node
 
 
 def expand_leaf(node, board, state):
@@ -33,8 +43,12 @@ def expand_leaf(node, board, state):
     Returns:    The added child node.
 
     """
-    pass
-    # Hint: return new_node
+    chosen_action = random.choice(node.untried_actions)
+    new_board_state = board.next_state(state, chosen_action)
+    new_legal_actions = board.legal_actions(new_board_state)
+    new_node = MCTSNode(parent=node, parent_action = chosen_action, action_list = new_legal_actions)
+
+    return new_node
 
 
 def rollout(board, state):
@@ -71,6 +85,8 @@ def think(board, state):
     """
     identity_of_bot = board.current_player(state)
     root_node = MCTSNode(parent=None, parent_action=None, action_list=board.legal_actions(state))
+
+    node_to_expand = traverse_nodes(root_node, board, state, identity_of_bot)
 
     for step in range(num_nodes):
         # Copy the game for sampling a playthrough
