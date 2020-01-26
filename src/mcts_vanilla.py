@@ -79,26 +79,31 @@ def backpropagate(node, won):
     """
 
     current_node = node
-    print(current_node.parent)
 
     while current_node.parent is not None:
-        print('Wins:')
-        print(current_node.wins)
-        print('\nVisits:')
-        print(current_node.visits)
-        node.visits += 1
+        current_node.visits += 1
         if won == 1:
-            node.wins += 1
+            current_node.wins += 1
+
+        print('New Wins:')
+        print(current_node.wins)
+        print('\nNew Visits:')
+        print(current_node.visits)
 
         current_node = current_node.parent
 
-    print('Root Node Reached')
-    node.visits += 1
+    print('\nRoot Node Reached')
+    current_node.visits += 1
 
     if won == 1:
-        node.wins += 1
+        current_node.wins += 1
 
-    return
+    print('Root Wins:')
+    print(current_node.wins)
+    print('\nRoot Visits:')
+    print(current_node.visits)
+
+    pass
 
 
 def think(board, state):
