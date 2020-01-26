@@ -48,6 +48,8 @@ def expand_leaf(node, board, state):
     new_legal_actions = board.legal_actions(new_board_state)
     new_node = MCTSNode(parent=node, parent_action = chosen_action, action_list = new_legal_actions)
 
+
+
     return new_node
 
 
@@ -59,7 +61,10 @@ def rollout(board, state):
         state:  The state of the game.
 
     """
-    pass
+
+    if board.is_ended(state):
+        win_state =
+
 
 
 def backpropagate(node, won):
@@ -86,8 +91,6 @@ def think(board, state):
     identity_of_bot = board.current_player(state)
     root_node = MCTSNode(parent=None, parent_action=None, action_list=board.legal_actions(state))
 
-    node_to_expand = traverse_nodes(root_node, board, state, identity_of_bot)
-
     for step in range(num_nodes):
         # Copy the game for sampling a playthrough
         sampled_game = state
@@ -96,7 +99,18 @@ def think(board, state):
         node = root_node
 
         # Do MCTS - This is all you!
+        node_to_expand = traverse_nodes(node, board, sampled_game, identity_of_bot)
+        new_child_node = expand_leaf(node_to_expand, board, sampled_game)
 
     # Return an action, typically the most frequently used action (from the root) or the action with the best
     # estimated win rate.
-    return None
+    best_action_winrate = 0
+
+    for action in root_node.child_nodes.values():
+        current_action_winrate = action.wins / action.visits
+
+        if current_action_winrate > best_action_rate:
+            best_node = action
+            best_action_winrate = current_action_winrate
+
+    return best_node.parent_action
