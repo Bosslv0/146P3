@@ -77,7 +77,28 @@ def backpropagate(node, won):
         won:    An indicator of whether the bot won or lost the game.
 
     """
-    pass
+
+    current_node = node
+    print(current_node.parent)
+
+    while current_node.parent is not None:
+        print('Wins:')
+        print(current_node.wins)
+        print('\nVisits:')
+        print(current_node.visits)
+        node.visits += 1
+        if won == 1:
+            node.wins += 1
+
+        current_node = current_node.parent
+
+    print('Root Node Reached')
+    node.visits += 1
+
+    if won == 1:
+        node.wins += 1
+
+    return
 
 
 def think(board, state):
@@ -118,7 +139,7 @@ def think(board, state):
 
         if win_loss_result == 1:
             print('Win!')
-        elif: win_loss_result == 2:
+        elif win_loss_result == -1:
             print('Loss!')
         else:
             print('Draw!')
