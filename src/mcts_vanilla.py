@@ -22,7 +22,7 @@ def traverse_nodes(node, board, state, identity):
     if board.legal_actions(state) and node.untried_actions:
         return node
 
-    chosen_action = choice(node.child_nodes.keys())
+    chosen_action = choice(list(node.child_nodes.keys()))
     print(chosen_action)
     chosen_node = node.child_nodes[chosen_action]
 
@@ -34,7 +34,7 @@ def expand_leaf(node, board, state):
     """ Adds a new leaf to the tree by creating a new child node for the given node.
 
     Args:
-        node:   The node for which a child will be added.
+        node:   The parent node for which a child will be added.
         board:  The game setup.
         state:  The state of the game.
 
@@ -45,6 +45,9 @@ def expand_leaf(node, board, state):
     new_board_state = board.next_state(state, chosen_action)
     new_legal_actions = board.legal_actions(new_board_state)
     new_node = MCTSNode(parent=node, parent_action = chosen_action, action_list = new_legal_actions)
+
+    node.child_nodes[chosen_action] = new_node
+    node.untried_actions.remove(chosen_action)
 
     return new_node
 
@@ -155,12 +158,17 @@ def think(board, state):
     # Return an action, typically the most frequently used action (from the root) or the action with the best
     # estimated win rate.
     best_action_winrate = 0
+    best_node = None
+
+    print(root_node.untried_actions)
 
     for action in root_node.child_nodes.values():
         current_action_winrate = action.wins / action.visits
+        print(current_action_winrate)
 
-        if current_action_winrate > best_action_rate:
+        if current_action_winrate > best_action_winrate:
             best_node = action
             best_action_winrate = current_action_winrate
 
+    print(best_node)
     return best_node.parent_action
