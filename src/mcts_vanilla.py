@@ -107,7 +107,7 @@ def think(board, state):
         board_state_to_sim = board.next_state(sampled_game, action_to_sim)
         result_of_action = rollout(board, board_state_to_sim)
 
-        if identity_of_bot = 1:
+        if identity_of_bot == 1:
             win_loss_result = result_of_action[1]
             print('Player 1:')
             print(win_loss_result)
@@ -116,7 +116,7 @@ def think(board, state):
             print('Player 2:')
             print(win_loss_result)
 
-        if win_loss_result = 1:
+        if win_loss_result == 1:
             print('Win!')
         elif: win_loss_result = 2:
             print('Loss!')
