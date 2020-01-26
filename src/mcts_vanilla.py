@@ -59,7 +59,12 @@ def rollout(board, state):
         state:  The state of the game.
 
     """
-    pass
+    chosen_action = random.choice(board.legal_actions(state))
+    if board.is_ended:
+        return board.points_values(state)
+    else:
+        win_state = rollout(board, board.next_state(state, chosen_action))
+    return win_state
 
 
 def backpropagate(node, won):
@@ -86,7 +91,7 @@ def think(board, state):
     identity_of_bot = board.current_player(state)
     root_node = MCTSNode(parent=None, parent_action=None, action_list=board.legal_actions(state))
 
-    node_to_expand = traverse_nodes(root_node, board, state, identity_of_bot)
+
 
     for step in range(num_nodes):
         # Copy the game for sampling a playthrough
@@ -96,6 +101,7 @@ def think(board, state):
         node = root_node
 
         # Do MCTS - This is all you!
+        node_to_expand = traverse_nodes(node, board, sampled_game, identity_of_bot)
 
     # Return an action, typically the most frequently used action (from the root) or the action with the best
     # estimated win rate.
