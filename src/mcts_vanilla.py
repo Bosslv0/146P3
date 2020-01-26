@@ -118,7 +118,7 @@ def think(board, state):
 
         if win_loss_result == 1:
             print('Win!')
-        elif: win_loss_result = 2:
+        elif: win_loss_result == 2:
             print('Loss!')
         else:
             print('Draw!')
