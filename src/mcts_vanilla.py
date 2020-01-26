@@ -20,11 +20,9 @@ def traverse_nodes(node, board, state, identity):
     """
 
     if board.legal_actions(state) and node.untried_actions:
-        print('New Node Found!')
-        leaf_node = current_node
-        return leaf_node
+        return node
 
-    chosen_action = random.choice(node.child_nodes.keys())
+    chosen_action = choice(node.child_nodes.keys())
     print(chosen_action)
     chosen_node = node.child_nodes[chosen_action]
 
@@ -43,7 +41,7 @@ def expand_leaf(node, board, state):
     Returns:    The added child node.
 
     """
-    chosen_action = random.choice(node.untried_actions)
+    chosen_action = choice(node.untried_actions)
     new_board_state = board.next_state(state, chosen_action)
     new_legal_actions = board.legal_actions(new_board_state)
     new_node = MCTSNode(parent=node, parent_action = chosen_action, action_list = new_legal_actions)
@@ -64,7 +62,7 @@ def rollout(board, state):
         win_state = board.points_values(state)
         return win_state
 
-    chosen_action = random.choice(board.legal_actions(state))
+    chosen_action = choice(board.legal_actions(state))
     new_board_state = board.next_state(state, chosen_action)
     win_state = rollout(board, new_board_state)
 
@@ -93,7 +91,6 @@ def think(board, state):
 
     """
     identity_of_bot = board.current_player(state)
-    print(identity_of_bot)
     root_node = MCTSNode(parent=None, parent_action=None, action_list=board.legal_actions(state))
 
     for step in range(num_nodes):
@@ -109,6 +106,25 @@ def think(board, state):
         action_to_sim = new_child_node.parent_action
         board_state_to_sim = board.next_state(sampled_game, action_to_sim)
         result_of_action = rollout(board, board_state_to_sim)
+
+        if identity_of_bot = 1:
+            win_loss_result = result_of_action[1]
+            print('Player 1:')
+            print(win_loss_result)
+        else:
+            win_loss_result = result_of_action[2]
+            print('Player 2:')
+            print(win_loss_result)
+
+        if win_loss_result = 1:
+            print('Win!')
+        elif: win_loss_result = 2:
+            print('Loss!')
+        else:
+            print('Draw!')
+
+        backpropagate(new_child_node, win_loss_result)
+
 
     # Return an action, typically the most frequently used action (from the root) or the action with the best
     # estimated win rate.
