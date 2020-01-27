@@ -3,9 +3,8 @@ from mcts_node import MCTSNode
 from random import choice
 from math import sqrt, log
 
-num_nodes = 1000
+num_nodes = 100
 explore_faction = 2.
-num_moves = 0
 
 def traverse_nodes(node, board, state, identity):
     """ Traverses the tree until the end criterion are met.
@@ -22,13 +21,12 @@ def traverse_nodes(node, board, state, identity):
 
     if board.legal_actions(state) and node.untried_actions:
         return node
-
-    chosen_action = choice(list(node.child_nodes.keys()))
-    chosen_node = node.child_nodes[chosen_action]
-
-    leaf_node = traverse_nodes(chosen_node, board, state, identity)
-    return leaf_node
-
+    elif node.child_nodes.keys():
+        chosen_node = uct_search(node)
+        leaf_node = traverse_nodes(chosen_node, board, state, identity)
+        return leaf_node
+    else:
+        return node
 
 def expand_leaf(node, board, state):
     """ Adds a new leaf to the tree by creating a new child node for the given node.
@@ -41,15 +39,18 @@ def expand_leaf(node, board, state):
     Returns:    The added child node.
 
     """
-    chosen_action = choice(node.untried_actions)
-    new_board_state = board.next_state(state, chosen_action)
-    new_legal_actions = board.legal_actions(new_board_state)
-    new_node = MCTSNode(parent=node, parent_action = chosen_action, action_list = new_legal_actions)
+    if node.untried_actions:
+        chosen_action = choice(node.untried_actions)
+        new_board_state = board.next_state(state, chosen_action)
+        new_legal_actions = board.legal_actions(new_board_state)
+        new_node = MCTSNode(parent=node, parent_action = chosen_action, action_list = new_legal_actions)
 
-    node.child_nodes[chosen_action] = new_node
-    node.untried_actions.remove(chosen_action)
+        node.child_nodes[chosen_action] = new_node
+        node.untried_actions.remove(chosen_action)
 
-    return new_node
+        return new_node
+    else:
+        return node
 
 
 def rollout(board, state):
@@ -98,6 +99,20 @@ def backpropagate(node, won):
     pass
 
 
+def uct_search(node):
+    best_ucb = -1
+    best_node = None
+    for child in node.child_nodes.values():
+        exploit = child.wins/child.visits
+        c = explore_faction
+        explore = sqrt((2 * (log(node.visits)))/child.visits)
+        child_ucb = exploit + c * explore
+        if child_ucb >= best_ucb:
+            best_ucb = child_ucb
+            best_node = child
+    return best_node
+
+
 def think(board, state):
     """ Performs MCTS by sampling games and calling the appropriate functions to construct the game tree.
 
@@ -142,11 +157,10 @@ def think(board, state):
     for action in root_node.child_nodes.values():
         current_action_winrate = action.wins / action.visits
 
-        if current_action_winrate > best_action_winrate:
+        if current_action_winrate >= best_action_winrate:
             best_node = action
             best_action_winrate = current_action_winrate
-    num_moves += 1
-    print("move count = ", num_moves)
+
     return best_node.parent_action
     # Return an action, typically the most frequently used action (from the root) or the action with the best
     # estimated win rate.
