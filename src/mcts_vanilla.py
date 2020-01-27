@@ -5,7 +5,7 @@ from math import sqrt, log
 
 num_nodes = 1000
 explore_faction = 2.
-move_count = 0
+num_moves = 0
 
 def traverse_nodes(node, board, state, identity):
     """ Traverses the tree until the end criterion are met.
@@ -108,6 +108,7 @@ def think(board, state):
     Returns:    The action to be taken.
 
     """
+    global num_moves
     identity_of_bot = board.current_player(state)
     root_node = MCTSNode(parent=None, parent_action=None, action_list=board.legal_actions(state))
 
@@ -126,12 +127,11 @@ def think(board, state):
         result_of_action = rollout(board, board_state_to_sim)
 
         if identity_of_bot == 1:
-            win_loss_result = result_of_action[1
+            win_loss_result = result_of_action[1]
         else:
             win_loss_result = result_of_action[2]
 
         backpropagate(new_child_node, win_loss_result)
-
 
     # Return an action, typically the most frequently used action (from the root) or the action with the best
     # estimated win rate.
@@ -145,6 +145,7 @@ def think(board, state):
             best_node = action
             best_action_winrate = current_action_winrate
 
-    print('Move Count: ', move_count)
-    move_count += 1
+    num_moves += 1
+    print("move count = ", num_moves)
+
     return best_node.parent_action
