@@ -5,6 +5,7 @@ from math import sqrt, log
 
 num_nodes = 1000
 explore_faction = 2.
+num_moves = 0
 
 def traverse_nodes(node, board, state, identity):
     """ Traverses the tree until the end criterion are met.
@@ -23,7 +24,6 @@ def traverse_nodes(node, board, state, identity):
         return node
 
     chosen_action = choice(list(node.child_nodes.keys()))
-    print(chosen_action)
     chosen_node = node.child_nodes[chosen_action]
 
     leaf_node = traverse_nodes(chosen_node, board, state, identity)
@@ -88,23 +88,12 @@ def backpropagate(node, won):
         if won == 1:
             current_node.wins += 1
 
-        print('New Wins:')
-        print(current_node.wins)
-        print('\nNew Visits:')
-        print(current_node.visits)
-
         current_node = current_node.parent
 
-    print('\nRoot Node Reached')
     current_node.visits += 1
 
     if won == 1:
         current_node.wins += 1
-
-    print('Root Wins:')
-    print(current_node.wins)
-    print('\nRoot Visits:')
-    print(current_node.visits)
 
     pass
 
@@ -119,6 +108,7 @@ def think(board, state):
     Returns:    The action to be taken.
 
     """
+    global num_moves
     identity_of_bot = board.current_player(state)
     root_node = MCTSNode(parent=None, parent_action=None, action_list=board.legal_actions(state))
 
@@ -138,37 +128,24 @@ def think(board, state):
 
         if identity_of_bot == 1:
             win_loss_result = result_of_action[1]
-            print('Player 1:')
-            print(win_loss_result)
         else:
             win_loss_result = result_of_action[2]
-            print('Player 2:')
-            print(win_loss_result)
-
-        if win_loss_result == 1:
-            print('Win!')
-        elif win_loss_result == -1:
-            print('Loss!')
-        else:
-            print('Draw!')
 
         backpropagate(new_child_node, win_loss_result)
-
 
     # Return an action, typically the most frequently used action (from the root) or the action with the best
     # estimated win rate.
     best_action_winrate = 0
     best_node = None
 
-    print(root_node.untried_actions)
-
     for action in root_node.child_nodes.values():
         current_action_winrate = action.wins / action.visits
-        print(current_action_winrate)
 
         if current_action_winrate > best_action_winrate:
             best_node = action
             best_action_winrate = current_action_winrate
 
-    print(best_node)
+    num_moves += 1
+    print("move count = ", num_moves)
+
     return best_node.parent_action
