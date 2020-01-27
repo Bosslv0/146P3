@@ -5,6 +5,7 @@ from math import sqrt, log
 
 num_nodes = 1000
 explore_faction = 2.
+move_count = 0
 
 def traverse_nodes(node, board, state, identity):
     """ Traverses the tree until the end criterion are met.
@@ -144,4 +145,6 @@ def think(board, state):
             best_node = action
             best_action_winrate = current_action_winrate
 
+    print('Move Count: ', move_count)
+    move_count += 1
     return best_node.parent_action
