@@ -128,10 +128,8 @@ def think(board, state):
 
         if identity_of_bot == 1:
             win_loss_result = result_of_action[1]
-
         else:
             win_loss_result = result_of_action[2]
-
 
         backpropagate(new_child_node, win_loss_result)
 
@@ -146,6 +144,8 @@ def think(board, state):
         if current_action_winrate > best_action_winrate:
             best_node = action
             best_action_winrate = current_action_winrate
+
     num_moves += 1
     print("move count = ", num_moves)
+
     return best_node.parent_action
