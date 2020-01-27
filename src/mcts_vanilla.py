@@ -23,7 +23,6 @@ def traverse_nodes(node, board, state, identity):
         return node
 
     chosen_action = choice(list(node.child_nodes.keys()))
-    print(chosen_action)
     chosen_node = node.child_nodes[chosen_action]
 
     leaf_node = traverse_nodes(chosen_node, board, state, identity)
@@ -88,23 +87,12 @@ def backpropagate(node, won):
         if won == 1:
             current_node.wins += 1
 
-        print('New Wins:')
-        print(current_node.wins)
-        print('\nNew Visits:')
-        print(current_node.visits)
-
         current_node = current_node.parent
 
-    print('\nRoot Node Reached')
     current_node.visits += 1
 
     if won == 1:
         current_node.wins += 1
-
-    print('Root Wins:')
-    print(current_node.wins)
-    print('\nRoot Visits:')
-    print(current_node.visits)
 
     pass
 
@@ -137,20 +125,9 @@ def think(board, state):
         result_of_action = rollout(board, board_state_to_sim)
 
         if identity_of_bot == 1:
-            win_loss_result = result_of_action[1]
-            print('Player 1:')
-            print(win_loss_result)
+            win_loss_result = result_of_action[1
         else:
             win_loss_result = result_of_action[2]
-            print('Player 2:')
-            print(win_loss_result)
-
-        if win_loss_result == 1:
-            print('Win!')
-        elif win_loss_result == -1:
-            print('Loss!')
-        else:
-            print('Draw!')
 
         backpropagate(new_child_node, win_loss_result)
 
@@ -160,15 +137,11 @@ def think(board, state):
     best_action_winrate = 0
     best_node = None
 
-    print(root_node.untried_actions)
-
     for action in root_node.child_nodes.values():
         current_action_winrate = action.wins / action.visits
-        print(current_action_winrate)
 
         if current_action_winrate > best_action_winrate:
             best_node = action
             best_action_winrate = current_action_winrate
 
-    print(best_node)
     return best_node.parent_action
