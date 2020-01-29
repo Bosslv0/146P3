@@ -3,8 +3,9 @@ from mcts_node import MCTSNode
 from random import choice
 from math import sqrt, log
 
-num_nodes = 100
+num_nodes = 200
 explore_faction = 2.
+
 
 def traverse_nodes(node, board, state, identity):
     """ Traverses the tree until the end criterion are met.
@@ -22,7 +23,7 @@ def traverse_nodes(node, board, state, identity):
     if board.legal_actions(state) and node.untried_actions:
         return node
     elif node.child_nodes.keys():
-        chosen_node = uct_search(node)
+        chosen_node = uct_search(node, identity)
         leaf_node = traverse_nodes(chosen_node, board, state, identity)
         return leaf_node
     else:
@@ -32,7 +33,7 @@ def expand_leaf(node, board, state):
     """ Adds a new leaf to the tree by creating a new child node for the given node.
 
     Args:
-        node:   The parent node for which a child will be added.
+        node:   The node for which a child will be added.
         board:  The game setup.
         state:  The state of the game.
 
@@ -61,17 +62,22 @@ def rollout(board, state):
         state:  The state of the game.
 
     """
-
     if board.is_ended(state):
         win_state = board.points_values(state)
         return win_state
+
+    for move in board.legal_actions(state):
+        if move[2] == move[3] == 1:
+            chosen_action = move
+            new_board_state = board.next_state(state, chosen_action)
+            win_state = rollout(board, new_board_state)
+            return win_state
 
     chosen_action = choice(board.legal_actions(state))
     new_board_state = board.next_state(state, chosen_action)
     win_state = rollout(board, new_board_state)
 
     return win_state
-
 
 def backpropagate(node, won):
     """ Navigates the tree from a leaf node to the root, updating the win and visit count of each node along the path.
@@ -81,7 +87,6 @@ def backpropagate(node, won):
         won:    An indicator of whether the bot won or lost the game.
 
     """
-
     current_node = node
 
     while current_node.parent is not None:
@@ -99,18 +104,29 @@ def backpropagate(node, won):
     pass
 
 
-def uct_search(node):
+def uct_search(node, identity):
     best_ucb = -1
     best_node = None
-    for child in node.child_nodes.values():
-        exploit = child.wins/child.visits
-        c = explore_faction
-        explore = sqrt((2 * (log(node.visits)))/child.visits)
-        child_ucb = exploit + c * explore
-        if child_ucb >= best_ucb:
-            best_ucb = child_ucb
-            best_node = child
-    return best_node
+    if identity == 1:
+        for child in node.child_nodes.values():
+            exploit = child.wins/child.visits
+            c = explore_faction
+            explore = sqrt((2 * (log(node.visits)))/child.visits)
+            child_ucb = exploit + c * explore
+            if child_ucb >= best_ucb:
+                best_ucb = child_ucb
+                best_node = child
+        return best_node
+    else:
+        for child in node.child_nodes.values():
+            exploit = 1 - child.wins/child.visits
+            c = explore_faction
+            explore = sqrt((2 * (log(node.visits)))/child.visits)
+            child_ucb = exploit + c * explore
+            if child_ucb >= best_ucb:
+                best_ucb = child_ucb
+                best_node = child
+        return best_node
 
 
 def think(board, state):

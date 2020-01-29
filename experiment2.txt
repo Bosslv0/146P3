@@ -1,0 +1,14 @@
+node count|        Vanilla        | 	Modified     |
+__________|_____wins____|____wins____|
+      50	  | 	41         |         43	  |
+__________|_____________|____________|
+     100	  |	35         |         36	  |
+__________|_____________|____________|
+     200	  |	41         |         38	  |
+__________|_____________|____________|
+
+	-Sick Table!-
+
+Analysis:
+It seems that the modified version is comparable to the Vanilla version, untill we increasethe tree size.
+As we increase the tree size, the modified version begins to lose. Our heuristic seems to be trash.

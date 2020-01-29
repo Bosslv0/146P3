@@ -1,0 +1,16 @@
+node count|        Vanilla1      | 	Vanilla2 
+__________|_____wins____|____wins____
+100 / 50	  | 	37         |       45
+__________|_____________|____________
+100 / 100	  |	34         |      40
+__________|_____________|____________
+100 / 200	  |	44         |       32
+__________|_____________|____________
+100 / 500	  |	39         |       34
+__________|_____________|____________
+
+	-Sick Table!-
+
+Analysis:
+It seems as though giving the MCTS, with a random rollout, more nodes from which to make
+a choice, decreases the likelihood of a win for that tree.

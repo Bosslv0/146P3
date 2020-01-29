@@ -3,7 +3,7 @@ from mcts_node import MCTSNode
 from random import choice
 from math import sqrt, log
 
-num_nodes = 100
+num_nodes = 200
 explore_faction = 2.
 
 def traverse_nodes(node, board, state, identity):
@@ -143,8 +143,10 @@ def think(board, state):
 
         if identity_of_bot == 1:
             win_loss_result = result_of_action[1]
+
         else:
             win_loss_result = result_of_action[2]
+
 
         backpropagate(new_child_node, win_loss_result)
 
@@ -159,6 +161,5 @@ def think(board, state):
         if current_action_winrate >= best_action_winrate:
             best_node = action
             best_action_winrate = current_action_winrate
-
 
     return best_node.parent_action
