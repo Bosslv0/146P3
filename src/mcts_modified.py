@@ -6,6 +6,7 @@ from math import sqrt, log
 num_nodes = 200
 explore_faction = 2.
 
+
 def traverse_nodes(node, board, state, identity):
     """ Traverses the tree until the end criterion are met.
 
@@ -32,7 +33,7 @@ def expand_leaf(node, board, state):
     """ Adds a new leaf to the tree by creating a new child node for the given node.
 
     Args:
-        node:   The parent node for which a child will be added.
+        node:   The node for which a child will be added.
         board:  The game setup.
         state:  The state of the game.
 
@@ -61,7 +62,6 @@ def rollout(board, state):
         state:  The state of the game.
 
     """
-
     if board.is_ended(state):
         win_state = board.points_values(state)
         return win_state
@@ -87,7 +87,6 @@ def backpropagate(node, won):
         won:    An indicator of whether the bot won or lost the game.
 
     """
-
     current_node = node
 
     while current_node.parent is not None:
